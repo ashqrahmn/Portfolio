@@ -180,8 +180,10 @@ const Contact = ({ isDarkMode }) => {
             whileTap={{ scale: 1.05 }}
             onMouseEnter={() => setIsHoveredOrTouched(true)}
             onMouseLeave={() => setIsHoveredOrTouched(false)}
-            onTouchStart={() => setIsHoveredOrTouched(true)}
-            onTouchEnd={() => setIsHoveredOrTouched(false)}
+            onTouchStart={() => {
+              setIsHoveredOrTouched(true);
+              setTimeout(() => setIsHoveredOrTouched(false), 400);
+            }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={`py-3 px-8 2xl:py-4 2xl:px-10 flex items-center justify-between gap-2 text-white rounded-full duration-500 cursor-pointer ${
               isDarkMode
