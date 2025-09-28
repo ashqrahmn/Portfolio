@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
   const dateKey = new Date().toISOString().slice(0, 10);
   const key = `ip:${ip}:${dateKey}`;
-  const LIMIT = 100; // Allow 2 submissions per IP per day
+  const LIMIT = 2; // Allow 2 submissions per IP per day
 
   try {
     // Increment the submission count for the user's IP address in Redis.
