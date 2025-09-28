@@ -10,15 +10,45 @@ const Contact = ({ isDarkMode }) => {
 
   const API_KEY = import.meta.env.VITE_WEB3FORM_API_KEY;
 
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validateName = (name) => {
+    const words = name.trim().split(/\s+/);
+    return words.length >= 2 && words.every((w) => /^[a-zA-Z'-]{2,}$/.test(w));
+  };
+
+  const handleEmailChange = (event) => {
+    const email = event.target.value;
+    if (validateEmail(email)) setResult("");
+  };
+
+  const handleNameChange = (event) => {
+    const name = event.target.value;
+    if (validateName(name)) setResult("");
+  };
+
+  // --- Form Submission ---
   const onSubmit = async (event) => {
     event.preventDefault();
+    const form = event.target;
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+
+    if (!validateName(name)) {
+      setResult("Please enter a valid name");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setResult("Please enter a valid email address");
+      return;
+    }
+
     setResult("Sending...");
     setIsSubmitting(true);
 
-    const form = event.target;
     const formData = new FormData(form);
     formData.append("access_key", API_KEY);
-
     const formJson = Object.fromEntries(formData.entries());
 
     try {
@@ -31,7 +61,7 @@ const Contact = ({ isDarkMode }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
+        throw new Error(data.message || "Something went wrong");
       }
 
       setResult(data.message);
@@ -41,7 +71,9 @@ const Contact = ({ isDarkMode }) => {
       setResult(error.message);
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => setResult(""), 5000);
+      if (validateEmail(email) && validateName(name)) {
+        setTimeout(() => setResult(""), 5000);
+      }
     }
   };
 
@@ -105,8 +137,9 @@ const Contact = ({ isDarkMode }) => {
             }`}
             type="text"
             name="name"
-            placeholder="Enter your name"
+            placeholder="Enter your full name"
             required
+            onChange={handleNameChange}
           />
           <motion.input
             initial={{ x: 50, opacity: 0 }}
@@ -121,6 +154,7 @@ const Contact = ({ isDarkMode }) => {
             name="email"
             placeholder="Enter your email"
             required
+            onChange={handleEmailChange}
           />
         </div>
 
@@ -169,7 +203,10 @@ const Contact = ({ isDarkMode }) => {
               transition={{ type: "tween", duration: 0.4 }}
               className="flex items-center"
             >
-              <GoArrowRight className="text-xl 2xl:text-2xl" aria-label="Arrow right icon" />
+              <GoArrowRight
+                className="text-xl 2xl:text-2xl"
+                aria-label="Arrow right icon"
+              />
             </motion.span>
           </motion.button>
         </motion.div>
