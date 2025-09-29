@@ -7,6 +7,8 @@ const Contact = ({ isDarkMode }) => {
   const [result, setResult] = useState("");
   const [isHoveredOrTouched, setIsHoveredOrTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const API_KEY = import.meta.env.VITE_WEB3FORM_API_KEY;
 
@@ -17,17 +19,22 @@ const Contact = ({ isDarkMode }) => {
     return words.length >= 2 && words.every((w) => /^[a-zA-Z'-]{2,}$/.test(w));
   };
 
-  const handleEmailChange = (event) => {
-    const email = event.target.value;
-    if (validateEmail(email)) setResult("");
-  };
-
   const handleNameChange = (event) => {
     const name = event.target.value;
-    if (validateName(name)) setResult("");
+    if (validateName(name)) {
+      setNameError(false);
+      setResult("");
+    }
   };
 
-  // --- Form Submission ---
+  const handleEmailChange = (event) => {
+    const email = event.target.value;
+    if (validateEmail(email)) {
+      setEmailError(false);
+      setResult("");
+    }
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
@@ -35,13 +42,19 @@ const Contact = ({ isDarkMode }) => {
     const email = form.email.value.trim();
 
     if (!validateName(name)) {
+      setNameError(true);
       setResult("Please enter a valid name");
       return;
+    } else {
+      setNameError(false);
     }
 
     if (!validateEmail(email)) {
+      setEmailError(true);
       setResult("Please enter a valid email address");
       return;
+    } else {
+      setEmailError(false);
     }
 
     setResult("Sending...");
@@ -71,7 +84,11 @@ const Contact = ({ isDarkMode }) => {
       setResult(error.message);
     } finally {
       setIsSubmitting(false);
-      if (validateEmail(email) && validateName(name)) {
+      if (
+        validateEmail(email) &&
+        validateName(name) &&
+        result !== "Sending..."
+      ) {
         setTimeout(() => setResult(""), 5000);
       }
     }
@@ -130,14 +147,11 @@ const Contact = ({ isDarkMode }) => {
             initial={{ x: -50, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ delay: 1.1, duration: 0.6 }}
-            className={`flex-1 p-3 2xl:p-4 outline-none border-[0.5px] rounded-md placeholder:text-gray-400 ${
-              isDarkMode
-                ? "bg-darkHover border-white/90"
-                : "border-gray-400 bg-white"
-            }`}
+            className={`flex-1 p-3 2xl:p-4 outline-none border-[0.5px] rounded-md placeholder:text-gray-400
+              ${nameError ? "border-red-500 text-red-500 placeholder:text-red-300" : isDarkMode ? "bg-darkHover border-white/90" : "border-gray-400 bg-white"}`}
             type="text"
             name="name"
-            placeholder="Enter your full name"
+            placeholder="Your full name"
             required
             onChange={handleNameChange}
           />
@@ -145,14 +159,11 @@ const Contact = ({ isDarkMode }) => {
             initial={{ x: 50, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.6 }}
-            className={`flex-1 p-3 2xl:p-4 outline-none border-[0.5px] rounded-md placeholder:text-gray-400 ${
-              isDarkMode
-                ? "bg-darkHover border-white/90"
-                : "border-gray-400 bg-white"
-            }`}
+            className={`flex-1 p-3 2xl:p-4 outline-none border-[0.5px] rounded-md placeholder:text-gray-400
+              ${emailError ? "border-red-500 text-red-500 placeholder:text-red-300" : isDarkMode ? "bg-darkHover border-white/90" : "border-gray-400 bg-white"}`}
             type="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Your email address"
             required
             onChange={handleEmailChange}
           />
@@ -162,14 +173,11 @@ const Contact = ({ isDarkMode }) => {
           initial={{ y: 100, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ delay: 1.3, duration: 0.6 }}
-          className={`w-full p-4 2xl:p-5 outline-none border-[0.5px] mb-6 rounded-md placeholder:text-gray-400 resize-none ${
-            isDarkMode
-              ? "bg-darkHover border-white/90"
-              : "border-gray-400 bg-white"
-          }`}
+          className={`w-full p-4 2xl:p-5 outline-none border-[0.5px] mb-6 rounded-md placeholder:text-gray-400 resize-none
+            ${isDarkMode ? "bg-darkHover border-white/90" : "border-gray-400 bg-white"}`}
           rows="8"
           name="message"
-          placeholder="Enter your message"
+          placeholder="Write your message here..."
           required
         ></motion.textarea>
 
@@ -182,33 +190,22 @@ const Contact = ({ isDarkMode }) => {
             onMouseLeave={() => setIsHoveredOrTouched(false)}
             onTouchStart={() => {
               setIsHoveredOrTouched(true);
-              setTimeout(() => setIsHoveredOrTouched(false), 500);
+              setTimeout(() => setIsHoveredOrTouched(false), 600);
             }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className={`py-3 px-8 2xl:py-4 2xl:px-10 flex items-center justify-between gap-2 text-white rounded-full duration-500 cursor-pointer ${
-              isDarkMode
-                ? "bg-transparent border-[0.5px] hover:bg-darkHover"
-                : "bg-darkTheme hover:bg-darkHover/90"
-            } active:bg-darkHover ${
-              isSubmitting && "opacity-50 cursor-not-allowed"
-            }`}
+            className={`py-3 px-8 2xl:py-4 2xl:px-10 flex items-center justify-between gap-2 text-white rounded-full duration-500 cursor-pointer
+              ${isDarkMode ? "bg-transparent border-[0.5px] hover:bg-darkHover" : "bg-darkTheme hover:bg-darkHover/90"} 
+              ${isSubmitting && "opacity-50 cursor-not-allowed"}`}
             type="submit"
             disabled={isSubmitting}
           >
             Submit now
             <motion.span
-              animate={
-                isHoveredOrTouched
-                  ? { x: 40, opacity: 0 }
-                  : { x: 0, opacity: 1 }
-              }
+              animate={isHoveredOrTouched ? { x: 40, opacity: 0 } : { x: 0, opacity: 1 }}
               transition={{ type: "tween", duration: 0.4 }}
               className="flex items-center"
             >
-              <GoArrowRight
-                className="text-xl 2xl:text-2xl"
-                aria-label="Arrow right icon"
-              />
+              <GoArrowRight className="text-xl 2xl:text-2xl" aria-label="Arrow right icon" />
             </motion.span>
           </motion.button>
         </motion.div>
