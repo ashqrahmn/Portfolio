@@ -44,7 +44,7 @@ const Services = ({ isDarkMode }) => {
         whileInView={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
       >
-        I am a full stack developer and designer. I build projects that are
+        I am a full stack web developer and designer. I build projects that are
         clear, practical and made to work smoothly for people.
       </motion.p>
 

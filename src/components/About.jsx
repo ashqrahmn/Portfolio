@@ -72,10 +72,8 @@ const About = ({ isDarkMode }) => {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <p className="mb-10 max-w-2xl font-ovo text-base 2xl:text-lg">
-            I'm a full-stack web developer and graphic designer with experience
-            across both frontend and backend development. I enjoy building
-            real-world projects, working with modern design tools, and creating
-            user-friendly, visually appealing websites.
+            I'm a full-stack web developer and graphic designer with experience across both frontend and backend development. 
+            I enjoy building real-world projects, working with modern design tools, and creating user-friendly, visually appealing websites.
           </p>
 
           {/* Info Cards */}

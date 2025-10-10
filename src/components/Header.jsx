@@ -90,8 +90,7 @@ const Header = ({ isDarkMode, setIsDarkMode }) => {
         transition={{ duration: 0.6, delay: 0.7 }}
         className="max-w-2xl mx-auto font-ovo text-base 2xl:text-lg"
       >
-        I'm a full-stack developer and graphic designer who enjoys building
-        fast, user-friendly websites with clean, simple designs.
+        I'm a full-stack web developer with a design background. I like building real projects that work fast, feel smooth, and look clean.
       </motion.p>
 
       {/* Action Buttons */}
