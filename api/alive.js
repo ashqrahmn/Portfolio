@@ -7,12 +7,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(`${redisUrl}/ping`, {
+    await fetch(`${redisUrl}/ping`, {
       headers: { Authorization: `Bearer ${redisToken}` },
     });
-    const text = await response.text();
 
-    return res.status(200).json({ success: true, message: `Upstash ping: ${text}` });
+    return res.status(200).json({ success: true, message: "PING" });
   } catch (err) {
     console.error("Ping failed:", err);
     return res.status(500).json({ success: false, message: "Failed to ping Upstash" });
