@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Ovo&display=swap');
+@import "tailwindcss";
+
+@theme{
+    --color-lightHover: #fae8ff;
+    --color-darkTheme: #000000;
+    --color-darkHover: #1A1D1D;
+    --shadow-black: 4px 4px 0 0 #000;
+    --shadow-white: 4px 4px 0 0 #fff;
+    --font-outfit: "Outfit", sans-serif;
+    --font-ovo: "Ovo", serif;
+}
+
+.grid-cols-auto {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.dark body {
+  @apply bg-darkTheme text-white;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
