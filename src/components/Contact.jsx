@@ -60,24 +60,40 @@ const Contact = ({ isDarkMode }) => {
     setResult("Sending...");
     setIsSubmitting(true);
 
-    const formData = new FormData(form);
-    formData.append("access_key", API_KEY);
-    const formJson = Object.fromEntries(formData.entries());
-
     try {
-      const response = await fetch("/api/submit", {
+      // Step 1: ask our server if this IP is allowed to submit (rate limit check)
+      const rateLimitCheck = await fetch("/api/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+      });
+      const rateLimitData = await rateLimitCheck.json();
+
+      if (!rateLimitCheck.ok || !rateLimitData.success) {
+        throw new Error(
+          rateLimitData.message || "Too many attempts. Try again later."
+        );
+      }
+
+      // Step 2: submit directly to Web3Forms from the browser
+      const formData = new FormData(form);
+      formData.append("access_key", API_KEY);
+      const formJson = Object.fromEntries(formData.entries());
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
         body: JSON.stringify(formJson),
       });
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!data.success) {
         throw new Error(data.message || "Something went wrong");
       }
 
-      setResult(data.message);
+      setResult("Submitted Successfully");
       form.reset();
     } catch (error) {
       console.error("Submission Error:", error);
