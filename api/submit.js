@@ -70,12 +70,20 @@ export default async function handler(req, res) {
       headers: {
         "Content-Type": "application/json",
         accept: "application/json",
-        "User-Agent": "Web3FormsBot/1.0",
       },
       body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+    console.log("Web3Forms raw response:", rawText.slice(0, 500));
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      console.error("Web3Forms did not return JSON. Status:", response.status);
+      return res.status(502).json({ success: false, message: "Form service unavailable" });
+    }
 
     if (!data.success) {
       console.error("Web3Forms error:", data);
